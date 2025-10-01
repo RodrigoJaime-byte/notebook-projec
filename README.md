@@ -1,34 +1,36 @@
-# 📔 The Notebook - Sistema de Cuentas por Cobrar
+# The Notebook
 
-> Aplicación web para gestionar las cuentas por cobrar de tiendas y almacenes
+Sistema para gestionar cuentas por cobrar de tiendas.
 
-[![React](https://img.shields.io/badge/React-18.0.0-blue)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-4.0.0-purple)](https://vitejs.dev/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+## Como usar
 
-## 🎯 Descripción
+```bash
+cd client
+npm install
+npm run dev
+```
 
-The Notebook es una aplicación web moderna que digitaliza el sistema tradicional de "libreta de almacén". Permite a los propietarios de tiendas gestionar las compras a crédito de sus clientes, registrar pagos y generar balances mensuales automáticamente.
+Abrir: http://localhost:5173
 
-## ✨ Características Actuales
+## Login
 
-- 🔐 **Sistema de autenticación** con roles (Admin/Cliente)
-- 🏪 **Gestión de tiendas** - Crear y administrar tiendas
-- 👥 **Gestión de clientes** - Registrar nuevos clientes
-- 🛒 **Registro de compras** - Agregar compras a crédito
-- 📊 **Balances mensuales** - Cálculo automático de totales
-- 💰 **Cierre de cuentas** - Gestión de pagos y saldos pendientes
-- 📱 **Diseño responsive** - Funciona en móviles y desktop
+- Usuario: admin
+- Contraseña: 123456
 
-## 🚀 Instalación y Configuración
+## Que hace
 
-### Prerrequisitos
-- Node.js >= 16.0.0
-- npm >= 8.0.0
+- Crear tiendas
+- Registrar clientes  
+- Agregar compras
+- Ver balances
+- Cerrar cuentas
 
-### Pasos para iniciar el proyecto
+## Tecnologias
 
-1. **Clonar el repositorio**
-   ```bash
-   git clone https://github.com/TU_USUARIO/the-notebook.git
-   cd the-notebook
+- React + Vite
+- CSS
+- LocalStorage
+
+## Estado
+
+Frontend listo. Backend pendiente.

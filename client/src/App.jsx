@@ -15,7 +15,7 @@ function App() {
     { 
       id: 1, 
       username: "admin", 
-      password: "123", 
+      password: "123456", 
       role: "admin", 
       storeId: null,
       name: "Administrador Principal"

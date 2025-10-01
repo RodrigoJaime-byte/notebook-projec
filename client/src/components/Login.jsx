@@ -4,91 +4,59 @@ function Login({ onLogin }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     setError('')
-    setIsLoading(true)
     
-    if (!username.trim() || !password.trim()) {
-      setError('Por favor completa todos los campos')
-      setIsLoading(false)
+    if (!username || !password) {
+      setError('Completa todos los campos')
       return
     }
 
-    const result = onLogin(username.trim(), password)
+    const result = onLogin(username, password)
     
     if (!result.success) {
       setError(result.message)
       setPassword('')
     }
-    
-    setIsLoading(false)
   }
 
   return (
     <div className="login-container">
       <div className="login-card">
-        <div className="login-header">
-          <div className="logo">📔</div>
-          <h1>The Notebook</h1>
-          <p>Sistema de Cuentas por Cobrar</p>
-        </div>
+        <h1>📔 The Notebook</h1>
+        <p>Sistema de Cuentas</p>
 
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
-            <label htmlFor="username">Usuario</label>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Usuario</label>
             <input
-              id="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Ingresa tu usuario"
-              className="form-input"
-              disabled={isLoading}
+              placeholder="Usuario"
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Contraseña</label>
+          <div>
+            <label>Contraseña</label>
             <input
-              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Ingresa tu contraseña"
-              className="form-input"
-              disabled={isLoading}
+              placeholder="Contraseña"
             />
           </div>
 
-          {error && (
-            <div className="error-message">
-              ⚠️ {error}
-            </div>
-          )}
+          {error && <div className="error">{error}</div>}
 
-          <button 
-            type="submit" 
-            className="login-button"
-            disabled={isLoading}
-          >
-            {isLoading ? '🔄 Iniciando...' : '🔑 Iniciar Sesión'}
-          </button>
+          <button type="submit">Entrar</button>
         </form>
 
-        <div className="demo-section">
-          <h3>👥 Usuarios de Prueba</h3>
-          <div className="demo-users">
-            <div className="demo-user">
-              <span className="role-badge admin">Admin</span>
-              <strong>admin</strong> / 123
-            </div>
-          </div>
-          <p className="demo-note">
-            💡 El admin puede crear su tienda y clientes
-          </p>
+        <div className="demo">
+          <p><strong>Usuario:</strong> admin</p>
+          <p><strong>Contraseña:</strong> 123456</p>
         </div>
       </div>
     </div>
