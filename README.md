@@ -1,34 +1,34 @@
-# 📓 El Cuaderno
+# 📔 The Notebook - Sistema de Cuentas por Cobrar
 
-> Sistema de gestión de deudas para almacenes - Modernizando el libro de almacén tradicional
+> Aplicación web para gestionar las cuentas por cobrar de tiendas y almacenes
 
+[![React](https://img.shields.io/badge/React-18.0.0-blue)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-4.0.0-purple)](https://vitejs.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)](https://nodejs.org/)
-[![React Version](https://img.shields.io/badge/react-%5E18.0.0-blue)](https://reactjs.org/)
 
 ## 🎯 Descripción
 
-El Cuaderno es una aplicación web progresiva (PWA) que digitaliza el sistema tradicional de registro de deudas en almacenes. Permite a los propietarios gestionar las compras a crédito de sus clientes y automatiza el cálculo de balances mensuales.
+The Notebook es una aplicación web moderna que digitaliza el sistema tradicional de "libreta de almacén". Permite a los propietarios de tiendas gestionar las compras a crédito de sus clientes, registrar pagos y generar balances mensuales automáticamente.
 
-## ✨ Características
+## ✨ Características Actuales
 
-- 👥 **Gestión de usuarios**: Administradores y clientes con roles diferenciados
-- 📱 **PWA**: Instalable en dispositivos móviles
-- 💰 **Gestión de compras**: Registro y seguimiento de compras a crédito
-- 📊 **Balances automáticos**: Cálculo automático de totales mensuales
-- 🔄 **Carry-over**: Traspaso automático de saldos pendientes
-- 🔐 **Autenticación segura**: JWT con control de acceso basado en roles
+- 🔐 **Sistema de autenticación** con roles (Admin/Cliente)
+- 🏪 **Gestión de tiendas** - Crear y administrar tiendas
+- 👥 **Gestión de clientes** - Registrar nuevos clientes
+- 🛒 **Registro de compras** - Agregar compras a crédito
+- 📊 **Balances mensuales** - Cálculo automático de totales
+- 💰 **Cierre de cuentas** - Gestión de pagos y saldos pendientes
+- 📱 **Diseño responsive** - Funciona en móviles y desktop
 
-## 🚀 Inicio Rápido
+## 🚀 Instalación y Configuración
 
 ### Prerrequisitos
 - Node.js >= 16.0.0
-- MongoDB >= 5.0
-- npm o yarn
+- npm >= 8.0.0
 
-### Instalación
+### Pasos para iniciar el proyecto
 
 1. **Clonar el repositorio**
    ```bash
-   git clone https://github.com/tu-usuario/el-cuaderno.git
-   cd el-cuaderno
+   git clone https://github.com/TU_USUARIO/the-notebook.git
+   cd the-notebook
