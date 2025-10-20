@@ -1,12 +1,34 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-function CreateCustomer({ onCreateCustomer, existingUsers }) {
+function CreateCustomer({ onCreateCustomer, customers = [] }) {
   const [name, setName] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [passwordStrength, setPasswordStrength] = useState(0)
+
+  // Evaluar la fortaleza de la contraseña
+  useEffect(() => {
+    if (!password) {
+      setPasswordStrength(0)
+      return
+    }
+    
+    let strength = 0
+    
+    // Longitud mínima
+    if (password.length >= 3) strength += 1
+    if (password.length >= 6) strength += 1
+    
+    // Complejidad
+    if (/[A-Z]/.test(password)) strength += 1
+    if (/[0-9]/.test(password)) strength += 1
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1
+    
+    setPasswordStrength(Math.min(strength, 5))
+  }, [password])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -34,7 +56,7 @@ function CreateCustomer({ onCreateCustomer, existingUsers }) {
     }
 
     // Verificar si el usuario ya existe
-    if (existingUsers.some(user => user.username === username.trim())) {
+    if (customers.some(user => user.username === username.trim())) {
       setError('Este nombre de usuario ya existe')
       setIsLoading(false)
       return
@@ -52,6 +74,7 @@ function CreateCustomer({ onCreateCustomer, existingUsers }) {
       setName('')
       setUsername('')
       setPassword('')
+      setPasswordStrength(0)
       
       setTimeout(() => setSuccess(''), 3000)
     } else {
@@ -67,89 +90,170 @@ function CreateCustomer({ onCreateCustomer, existingUsers }) {
     setPassword('')
     setError('')
     setSuccess('')
+    setPasswordStrength(0)
+  }
+
+  // Función para generar el texto de fortaleza de contraseña
+  const getStrengthText = () => {
+    if (!password) return '';
+    const texts = ['Muy débil', 'Débil', 'Regular', 'Buena', 'Fuerte', 'Excelente'];
+    return texts[passwordStrength];
   }
 
   return (
-    <div className="form-container">
-      <div className="form-header">
-        <h2>👤 Crear Cliente</h2>
-        <p>Registra un nuevo cliente en tu tienda</p>
+    <div className="create-customer-container">
+      <div className="form-card">
+        <div className="form-header">
+          <div className="form-icon">👤</div>
+          <h2>Crear Cliente</h2>
+          <p>Registra un nuevo cliente en tu tienda</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="customer-form">
+          {error && (
+            <div className="alert alert-error">
+              <span className="alert-icon">⚠️</span>
+              <span className="alert-text">{error}</span>
+              <button 
+                type="button" 
+                className="alert-close" 
+                onClick={() => setError('')}
+                aria-label="Cerrar alerta"
+              >
+                ×
+              </button>
+            </div>
+          )}
+
+          {success && (
+            <div className="alert alert-success">
+              <span className="alert-icon">✅</span>
+              <span className="alert-text">{success}</span>
+              <button 
+                type="button" 
+                className="alert-close" 
+                onClick={() => setSuccess('')}
+                aria-label="Cerrar alerta"
+              >
+                ×
+              </button>
+            </div>
+          )}
+
+          <div className="form-group">
+            <label htmlFor="name" className="form-label">Nombre Completo</label>
+            <div className="input-with-icon">
+              <span className="input-icon">👤</span>
+              <input
+                id="name"
+                type="text"
+                className="form-input"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Nombre del cliente"
+                disabled={isLoading}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="username" className="form-label">Nombre de Usuario</label>
+            <div className="input-with-icon">
+              <span className="input-icon">🔤</span>
+              <input
+                id="username"
+                type="text"
+                className="form-input"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Usuario para iniciar sesión"
+                disabled={isLoading}
+                required
+                minLength={3}
+              />
+            </div>
+            <small className="form-hint">Mínimo 3 caracteres, debe ser único</small>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password" className="form-label">Contraseña</label>
+            <div className="input-with-icon">
+              <span className="input-icon">🔒</span>
+              <input
+                id="password"
+                type="password"
+                className="form-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Contraseña segura"
+                disabled={isLoading}
+                required
+                minLength={3}
+              />
+            </div>
+            
+            {password && (
+              <>
+                <div className="password-strength">
+                  <div className={`strength-segment ${passwordStrength >= 1 ? 'active' : ''}`}></div>
+                  <div className={`strength-segment ${passwordStrength >= 2 ? 'active' : ''}`}></div>
+                  <div className={`strength-segment ${passwordStrength >= 3 ? 'active' : ''}`}></div>
+                  <div className={`strength-segment ${passwordStrength >= 4 ? 'active' : ''}`}></div>
+                  <div className={`strength-segment ${passwordStrength >= 5 ? 'active' : ''}`}></div>
+                </div>
+                <small className={`strength-text strength-${passwordStrength}`}>
+                  {getStrengthText()}
+                </small>
+              </>
+            )}
+          </div>
+
+          <div className="form-actions">
+            <button 
+              type="button" 
+              onClick={resetForm} 
+              className="btn-outline"
+              disabled={isLoading}
+            >
+              Limpiar
+            </button>
+            <button 
+              type="submit" 
+              className="btn-primary" 
+              disabled={isLoading}
+            >
+              {isLoading ? 'Creando...' : 'Crear Cliente'}
+            </button>
+          </div>
+        </form>
       </div>
-
-      <form onSubmit={handleSubmit} className="form">
-        {error && (
-          <div className="alert alert-error">
-            <span className="alert-icon">⚠️</span>
-            <span className="alert-text">{error}</span>
-          </div>
-        )}
-
-        {success && (
-          <div className="alert alert-success">
-            <span className="alert-icon">✅</span>
-            <span className="alert-text">{success}</span>
-          </div>
-        )}
-
-        <div className="form-group">
-          <label htmlFor="name">Nombre Completo *</label>
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Ej: Juan Pérez"
-            className="form-input"
-            disabled={isLoading}
-          />
+      
+      <div className="customer-list-section">
+        <div className="list-header">
+          <h3>Clientes Registrados</h3>
         </div>
-
-        <div className="form-group">
-          <label htmlFor="username">Usuario *</label>
-          <input
-            id="username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Ej: juan123"
-            className="form-input"
-            disabled={isLoading}
-          />
+        <div className="customer-list">
+          {customers.length > 0 ? (
+            customers.map(customer => (
+              <div key={customer.id} className="customer-item">
+                <div className="customer-avatar">{customer.name.charAt(0).toUpperCase()}</div>
+                <div className="customer-info">
+                  <div className="customer-name">{customer.name}</div>
+                  <div className="customer-username">@{customer.username}</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="empty-list">
+              <div className="empty-icon">🔍</div>
+              <p>No hay clientes registrados</p>
+            </div>
+          )}
         </div>
-
-        <div className="form-group">
-          <label htmlFor="password">Contraseña *</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Mínimo 3 caracteres"
-            className="form-input"
-            disabled={isLoading}
-          />
-        </div>
-
-        <div className="form-actions">
-          <button
-            type="button"
-            onClick={resetForm}
-            className="btn btn-secondary"
-            disabled={isLoading}
-          >
-            Limpiar
-          </button>
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Creando...' : 'Crear Cliente'}
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
-  )
+  );
 }
 
-export default CreateCustomer
+export default CreateCustomer;

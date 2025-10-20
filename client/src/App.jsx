@@ -73,9 +73,12 @@ function App() {
     localStorage.removeItem('notebook_user')
   }
 
-  // Crear tienda (solo admin sin tienda)
+  // Crear tienda (solo admin; permitir si storeId existe pero la tienda no está en la lista)
   const createStore = (storeName) => {
-    if (user.role !== 'admin' || user.storeId) return false
+    if (user.role !== 'admin') return false
+
+    const existingStore = stores.find(s => s.id === user.storeId)
+    if (user.storeId && existingStore) return false
 
     const newStore = {
       id: Date.now(),
@@ -117,8 +120,16 @@ function App() {
     if (user.role !== 'admin') return false
 
     const currentMonth = new Date().toISOString().substring(0, 7) // "2024-01"
-    
-    // Buscar si ya existe un documento de compras para este cliente y mes
+
+    // Validar y normalizar monto
+    const amountNum = Number(purchaseData.amount)
+    if (!Number.isFinite(amountNum) || amountNum <= 0) return false
+    const normalizedAmount = Math.round(amountNum * 100) / 100
+
+    // Asegurar fecha
+    const purchaseDate = purchaseData.date || new Date().toISOString().split('T')[0]
+
+    // Buscar si ya existe un documento de compras para este cliente y mes (abierto)
     let monthlyPurchase = purchases.find(p => 
       p.customerId === customerId && 
       p.month === currentMonth &&
@@ -127,17 +138,21 @@ function App() {
 
     const newItem = {
       id: Date.now(),
-      date: purchaseData.date,
+      date: purchaseDate,
       product: purchaseData.product,
-      amount: parseFloat(purchaseData.amount)
+      amount: normalizedAmount
     }
 
     if (monthlyPurchase) {
-      // Agregar item al mes existente
+      // Agregar item al mes existente con redondeo
+      const updatedTotal = Math.round((monthlyPurchase.total + normalizedAmount) * 100) / 100
+      const updatedBalanceDue = Math.round((updatedTotal + monthlyPurchase.carryOver) * 100) / 100
+
       const updatedPurchase = {
         ...monthlyPurchase,
         items: [...monthlyPurchase.items, newItem],
-        total: monthlyPurchase.total + newItem.amount
+        total: updatedTotal,
+        balanceDue: updatedBalanceDue
       }
       
       setPurchases(purchases.map(p => 
@@ -151,10 +166,10 @@ function App() {
         storeId: user.storeId,
         month: currentMonth,
         items: [newItem],
-        total: newItem.amount,
-        carryOver: 0, // Se calculará si hay saldo pendiente del mes anterior
+        total: normalizedAmount,
+        carryOver: 0,
         status: 'open', // 'open', 'closed', 'paid'
-        balanceDue: newItem.amount,
+        balanceDue: normalizedAmount,
         createdAt: new Date().toISOString()
       }
 
@@ -168,8 +183,9 @@ function App() {
       )
 
       if (previousPurchase) {
-        newMonthlyPurchase.carryOver = previousPurchase.balanceDue
-        newMonthlyPurchase.balanceDue = newMonthlyPurchase.total + newMonthlyPurchase.carryOver
+        const carryOver = Math.round(previousPurchase.balanceDue * 100) / 100
+        newMonthlyPurchase.carryOver = carryOver
+        newMonthlyPurchase.balanceDue = Math.round((newMonthlyPurchase.total + carryOver) * 100) / 100
       }
 
       setPurchases([...purchases, newMonthlyPurchase])
@@ -190,14 +206,18 @@ function App() {
 
     if (!monthlyPurchase) return false
 
-    const totalDue = monthlyPurchase.total + monthlyPurchase.carryOver
-    const remainingBalance = Math.max(0, totalDue - paidAmount)
+    // Validar pago
+    const paid = Number(paidAmount)
+    if (!Number.isFinite(paid) || paid < 0) return false
+
+    const totalDue = Math.round((monthlyPurchase.total + monthlyPurchase.carryOver) * 100) / 100
+    const remainingBalance = Math.max(0, Math.round((totalDue - paid) * 100) / 100)
 
     const updatedPurchase = {
       ...monthlyPurchase,
       status: remainingBalance === 0 ? 'paid' : 'closed',
       balanceDue: remainingBalance,
-      paidAmount: paidAmount,
+      paidAmount: Math.round(paid * 100) / 100,
       closedAt: new Date().toISOString()
     }
 
@@ -206,6 +226,12 @@ function App() {
     ))
 
     return true
+  }
+
+  // Función auxiliar para resetear la demo
+  const resetDemo = () => {
+    localStorage.clear()
+    window.location.reload()
   }
 
   // Función auxiliar para obtener el mes anterior
@@ -246,11 +272,13 @@ function App() {
           store={getStoreData()}
           customers={getCustomers()}
           purchases={user.role === 'admin' ? getStorePurchases() : getCustomerPurchases()}
+          stores={stores}
           onLogout={handleLogout}
           onCreateStore={createStore}
           onCreateCustomer={createCustomer}
           onAddPurchase={addPurchase}
           onCloseAccount={closeAccount}
+          onResetDemo={resetDemo}
         />
       )}
     </div>

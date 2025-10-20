@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function CreateStore({ onCreateStore, existingStores }) {
+function CreateStore({ onCreateStore, existingStores = [] }) {
   const [storeName, setStoreName] = useState('')
   const [description, setDescription] = useState('')
   const [address, setAddress] = useState('')
@@ -29,7 +29,7 @@ function CreateStore({ onCreateStore, existingStores }) {
     }
 
     // Verificar si ya existe una tienda con este nombre
-    if (existingStores && existingStores.some(store => store.name.toLowerCase() === storeName.trim().toLowerCase())) {
+    if (existingStores.some(store => store.name.toLowerCase() === storeName.trim().toLowerCase())) {
       setError('Ya existe una tienda con este nombre')
       setIsLoading(false)
       return
