@@ -110,23 +110,28 @@ function Dashboard({
                 {menuOpen ? "✕" : "☰"}
               </button>
             )}
+            <div className="user-name-section">
+              <span className="store-icon">🏪</span>
+              <span className="user-name-large">{user.name}</span>
+            </div>
             <div className="header-info">
-              <h1><span className="store-icon">🏪</span> {store?.name || 'The Notebook'}</h1>
-              <p className="user-role">
-                <span className="role-badge">{user.role === 'admin' ? 'Administrador' : 'Cliente'}</span>
-                <span className="user-name">{user.name}</span>
-              </p>
+              <h1>{store?.name || 'The Notebook'}</h1>
             </div>
           </div>
-          <div className="header-actions">
-            <button onClick={onResetDemo} className="btn-outline" title="Restablecer Demo">
-              <span className="btn-icon">♻️</span>
-              <span className="btn-text">Restablecer</span>
-            </button>
-            <button onClick={onLogout} className="btn-danger" title="Cerrar Sesión">
-              <span className="btn-icon">🚪</span>
-              <span className="btn-text">Salir</span>
-            </button>
+          <div className="user-section">
+            <div className="user-info">
+              <span className="role-badge">{user.role === 'admin' ? 'Administrador' : 'Cliente'}</span>
+            </div>
+            <div className="header-actions">
+              <button onClick={onResetDemo} className="btn-outline" title="Restablecer Demo">
+                <span className="btn-icon">♻️</span>
+                <span className="btn-text">Restablecer</span>
+              </button>
+              <button onClick={onLogout} className="btn-danger" title="Cerrar Sesión">
+                <span className="btn-icon">🚪</span>
+                <span className="btn-text">Salir</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
